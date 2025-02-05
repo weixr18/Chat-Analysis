@@ -36,10 +36,14 @@ When using this code, you should always respect and protect the privacy of other
 
 ### f_params.py
 
+中文：
+
 1. 你需要给你的群聊起一个**群聊代号**，中英文均可，例如"宿舍群"。如果你有多个群聊，每个群聊取一个不一样的
 2. 新建文件`scripts/f_params.py`，在里面仿照下方的示例，配置`months, txt_paths, csv_paths, periods, user_lists`这些字典变量。你需要给你的每个群聊配置一个表项，key就是群聊代号，value是对应的配置项。
 3. 具体的配置项含义和格式见下方示例。
 4. 注意txt文件和csv文件要放在示例中的对应位置，否则代码可能找不到
+
+English:
 
 1. You need to assign a **ChatCode** to your group chat, which can be in Chinese or English, such as "宿舍群". If you have multiple group chats, each one should have a unique name.
 2. Create a new file scripts/f_params.py. Inside this file, configure the dictionary variables months, txt_paths, csv_paths, periods, user_lists by following the example provided below. You need to set up an entry for each of your group chats, where the key is the **ChatCode**s and the value is the corresponding configuration item.
