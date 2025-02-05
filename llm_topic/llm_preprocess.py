@@ -1,15 +1,8 @@
 import json
 import pandas as pd
-from utils import months, chat
-
+from utils import *
 
 WITH_TEXT_DEBUG = False
-MESSAGES_FILE = f'../data/{chat}/cleaned/messages.csv'
-TEXT_FILE = f'../data/{chat}/cleaned/text.csv'
-TEXT_DEBUG_FILE = f'../data/{chat}/cleaned/text-debug.csv'
-LLM_INPUT_PATH = f'../data/{chat}/llm/input'
-TMP_START_FILE = f'../data/{chat}/llm/start.json'
-
 
 def gen_user_id_list():
     adf = pd.read_csv(MESSAGES_FILE)
@@ -19,10 +12,9 @@ def gen_user_id_list():
     return user_id_list
 
 
+"""split inputs into different txts to shorten LLM input token_length"""
 def llm_preprocess(user_id_list):
     # 取df的StrContent, CreateTime, NickName, localId四列数据合并到一个txt文件中
-    # 文件名为'../data/merged/{year}-{month}.txt'
-    # e.g. `u:312 t:44139 c:"XXXXXXXXXXXXX" id:7951``
     df = pd.read_csv(TEXT_FILE)
     df['CreateTimeNew'] = pd.to_datetime(df['CreateTime'], unit='s')
     df['Year'] = df['CreateTimeNew'].dt.year

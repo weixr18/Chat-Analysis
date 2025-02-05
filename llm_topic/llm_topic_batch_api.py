@@ -1,15 +1,9 @@
-import json, time, os, argparse
+import json, time, os
 from openai import OpenAI
-from f_params import api_settings
-from utils import sys_prompt, chat, _get_model, _decode_reply, _create_input_list
-
+from utils import _get_model, _decode_reply, _create_input_list, _create_batch_file
+from utils import *
 
 PROVIDER = 'NVIDIA'
-LLM_INPUT_PATH = f'../data/{chat}/llm/input'
-LLM_OUTPUT_PATH = f'../data/{chat}/llm/output'
-TMP_START_FILE = f'../data/{chat}/llm/start.json'
-TMP_JSONL_FILE = f"../data/{chat}/llm/tmp_batch_requests_{chat}.jsonl"
-
 
 #################################### preparation ####################################
 
@@ -35,37 +29,6 @@ def _prepare_input(name):
 
 
 #################################### LLM batch job ####################################
-
-
-def _create_batch_file(model:OpenAI, total_input_lists:dict):
-    """see: https://docs.sglang.ai/backend/openai_api_completions.html#Batches"""
-    if os.path.exists(TMP_JSONL_FILE):
-        os.remove(TMP_JSONL_FILE)
-    requests = []
-    for name in total_input_lists:
-        input_list = total_input_lists[name]
-        for i, messages in enumerate(input_list):
-            requests.append({
-                "custom_id": f"{name}_{i}",
-                "method": "POST",
-                "url": api_settings[PROVIDER]["BATCH_API"],
-                "body": {
-                    "model": model.MODEL,
-                    "messages": [
-                        {"role": "system", "content": sys_prompt},
-                        {"role": "user", "content": messages}
-                    ],
-                    "max_tokens": 2048,
-                },
-            })
-    print(f"Total requests: {len(requests)}")
-    with open(TMP_JSONL_FILE, "w", encoding="utf-8") as f:
-        for req in requests:
-            f.write(json.dumps(req, ensure_ascii=False) + "\n")
-    print(f"Created batch file: {TMP_JSONL_FILE}")
-    pass
-
-
 
 def _get_llm_batch_response(model:OpenAI):
     # prepare requests
@@ -125,7 +88,7 @@ def get_file_topics(model, starts, names):
         print(f"input num: {n_input}, message num: {len(msgs_out)}, avg msg/input: {len(msgs_out)/n_input}")
         total_input_lists[name] = input_list
         total_msgs_outs[name] = msgs_out
-    _create_batch_file(model, total_input_lists)
+    _create_batch_file(model, total_input_lists, PROVIDER)
     all_replies = _get_llm_batch_response(model)
     def _save_to_file(name, json_str):
         output_file = f'{LLM_OUTPUT_PATH}/{name}.txt'

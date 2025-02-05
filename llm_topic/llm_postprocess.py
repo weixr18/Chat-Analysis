@@ -1,11 +1,8 @@
 import os, json, csv
 from datetime import timedelta, datetime
 import pandas as pd
-from utils import chat
+from utils import *
 
-LLM_OUTPUT_PATH = f'../data/{chat}/llm/output'
-TOPIC_CSV_PATH = f'../data/{chat}/llm/topics.csv'
-PURE_TOPIC_PATH = f'../data/{chat}/llm/pure_topics.txt'
 
 def replace_in_files(directory):
     for filename in os.listdir(directory):
