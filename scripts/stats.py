@@ -1,4 +1,3 @@
-import argparse
 import pandas as pd
 import numpy as np
 from itertools import cycle
@@ -7,23 +6,11 @@ plt.rcParams['font.sans-serif'] = ['SimHei']  # 用黑体显示中文
 plt.rcParams['axes.unicode_minus'] = False   # 正常显示负号
 
 from f_params import user_lists, periods
+from utils import chat
 
 ############################# Basic #############################
 
-chat = None
 
-def get_chat_name():
-    global chat
-    parser = argparse.ArgumentParser(description="Process the chat parameter.")
-    parser.add_argument("--chat", required=True, help="Chat codename. See params.py.")
-    args = parser.parse_args()
-    chat = args.chat
-    print(f"Chat name: {chat}")
-    assert chat in user_lists
-    assert chat in periods
-    return chat
-
-get_chat_name() # must be called
 MESSAGES_FILE = f'../data/{chat}/cleaned/text.csv'
 RES_DIR = f'../res/{chat}'
 
@@ -189,10 +176,6 @@ def plot_monthly_message_counts():
 
 user_list = user_lists[chat]
 
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-
 def plot_daily_message_counts_of_user(NickName: str):
     df['CreateTimeNew'] = pd.to_datetime(df['CreateTime'], unit='s')
     # 绘制每日消息数量的图
@@ -260,4 +243,4 @@ def plot_figs_for_users():
 # plot_monthly_message_counts()
 # top_users_df = list_halfyear_top_users()
 # plot_halfyear_top_users(top_users_df)
-plot_figs_for_users()
+# plot_figs_for_users()

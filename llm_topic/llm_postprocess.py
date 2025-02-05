@@ -1,20 +1,8 @@
-import os, json, csv, argparse
+import os, json, csv
 from datetime import timedelta, datetime
 import pandas as pd
+from utils import chat
 
-
-chat = None
-
-def get_chat_name():
-    global chat
-    parser = argparse.ArgumentParser(description="Process the chat parameter.")
-    parser.add_argument("--chat", required=True, help="Chat codename. See params.py.")
-    args = parser.parse_args()
-    chat = args.chat
-    print(f"Chat name: {chat}")
-    return chat
-
-get_chat_name()
 LLM_OUTPUT_PATH = f'../data/{chat}/llm/output'
 TOPIC_CSV_PATH = f'../data/{chat}/llm/topics.csv'
 PURE_TOPIC_PATH = f'../data/{chat}/llm/pure_topics.txt'
@@ -83,6 +71,7 @@ def pretty_csv(output_csv_path):
     df_sorted = df.sort_values(by="StartTime")
     df_sorted.to_csv(output_csv_path, index=False)
     pass
+
 
 if __name__ == "__main__":
     replace_in_files(LLM_OUTPUT_PATH)

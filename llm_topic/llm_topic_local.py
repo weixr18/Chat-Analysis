@@ -5,9 +5,9 @@ from openai import OpenAI
 
 #################################### LLM preparation ####################################
 
-PROVIDER = 'deepseek'
+PROVIDER = 'local'
 settings = {
-    "deepseek": {
+    "local": {
         "MODEL" : "deepseek-v3",
         "API_KEY" : "EMPTY",
         "BASE_URL" : "http://127.0.0.1:30000/v1",

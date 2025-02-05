@@ -1,20 +1,7 @@
-import json, argparse
+import json
 import pandas as pd
-from f_params import months
+from utils import months, chat
 
-chat = None
-
-def get_chat_name():
-    global chat
-    parser = argparse.ArgumentParser(description="Process the chat parameter.")
-    parser.add_argument("--chat", required=True, help="Chat codename. See params.py.")
-    args = parser.parse_args()
-    chat = args.chat
-    assert chat in months 
-    print(f"Chat name: {chat}")
-    return chat
-
-get_chat_name()
 
 WITH_TEXT_DEBUG = False
 MESSAGES_FILE = f'../data/{chat}/cleaned/messages.csv'

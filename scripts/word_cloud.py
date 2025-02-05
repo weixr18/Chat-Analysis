@@ -1,25 +1,15 @@
-import re, argparse
+import re
 from collections import Counter
 import jieba
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud
 
 from f_stop_words import stop_words
+from utils import chat
 
 #############################################################
 
-chat = None
 
-def get_chat_name():
-    global chat
-    parser = argparse.ArgumentParser(description="Process the chat parameter.")
-    parser.add_argument("--chat", required=True, help="Chat codename. See params.py.")
-    args = parser.parse_args()
-    chat = args.chat
-    print(f"Chat name: {chat}")
-    return chat
-
-get_chat_name()
 MERGED_DIR = f'../data/{chat}/merged'
 WORDCLOUD_DIR = f'../res/{chat}/wordcloud'
 TOPICS_PURE_FILE = f'../data/{chat}/llm/topics_pure.csv'
@@ -90,8 +80,6 @@ def wordcloud(file_path):
 if __name__ == '__main__':
     import os
     for file in os.listdir(MERGED_DIR):
-        if file[:4] != "2021":
-            continue
         wordcloud(f'{MERGED_DIR}/{file}')
     # wordcloud(TOPICS_PURE_FILE)
     pass

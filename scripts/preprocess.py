@@ -1,24 +1,10 @@
 import csv, os, argparse
 import pandas as pd
 from f_params import txt_paths, csv_paths, months
+from utils import chat
 
 #################################### Links ####################################
 
-chat = None
-
-def get_chat_name():
-    global chat
-    parser = argparse.ArgumentParser(description="Process the chat parameter.")
-    parser.add_argument("--chat", help="Chat codename. See params.py.")
-    args = parser.parse_args()
-    chat = args.chat
-    print(f"Chat name: {chat}")
-    assert chat in txt_paths
-    assert chat in csv_paths
-    assert chat in months
-    return chat
-
-get_chat_name() # must be called before global variables
 TMP_LINK_FILE = f'../data/{chat}/cleaned/links.csv'
 TMP_CHAT_FILE = f'../data/{chat}/cleaned/chat.csv'
 MESSAGES_FILE = f'../data/{chat}/cleaned/messages.csv'
