@@ -1,4 +1,4 @@
-import time, json
+import time, json, os
 from openai import OpenAI
 from f_params import months, api_settings
 
@@ -16,6 +16,16 @@ def _get_chat_name():
     assert chat in months 
     print(f"Chat name: {chat}")
 _get_chat_name()
+
+MESSAGES_FILE = f'../data/{chat}/cleaned/messages.csv'
+TEXT_FILE = f'../data/{chat}/cleaned/text.csv'
+TEXT_DEBUG_FILE = f'../data/{chat}/cleaned/text-debug.csv'
+LLM_INPUT_PATH = f'../data/{chat}/llm/input'
+LLM_OUTPUT_PATH = f'../data/{chat}/llm/output'
+TMP_START_FILE = f'../data/{chat}/llm/start.json'
+TMP_JSONL_FILE = f"../data/{chat}/llm/tmp_batch_requests_{chat}.jsonl"
+TOPIC_CSV_PATH = f'../data/{chat}/llm/topics.csv'
+PURE_TOPIC_PATH = f'../data/{chat}/llm/pure_topics.txt'
 
 # init model
 def _get_model(PROVIDER):
@@ -62,6 +72,37 @@ def _create_input_list(lines):
     if current_str:
         input_list.append(current_str)
     return input_list
+
+
+
+def _create_batch_file(model:OpenAI, total_input_lists:dict, PROVIDER:str):
+    """see: https://docs.sglang.ai/backend/openai_api_completions.html#Batches"""
+    if os.path.exists(TMP_JSONL_FILE):
+        os.remove(TMP_JSONL_FILE)
+    requests = []
+    for name in total_input_lists:
+        input_list = total_input_lists[name]
+        for i, messages in enumerate(input_list):
+            requests.append({
+                "custom_id": f"{name}_{i}",
+                "method": "POST",
+                "url": api_settings[PROVIDER]["BATCH_API"],
+                "body": {
+                    "model": model.MODEL,
+                    "messages": [
+                        {"role": "system", "content": sys_prompt},
+                        {"role": "user", "content": messages}
+                    ],
+                    "max_tokens": 2048,
+                },
+            })
+    print(f"Total requests: {len(requests)}")
+    with open(TMP_JSONL_FILE, "w", encoding="utf-8") as f:
+        for req in requests:
+            f.write(json.dumps(req, ensure_ascii=False) + "\n")
+    print(f"Created batch file: {TMP_JSONL_FILE}")
+    pass
+
 
 
 #################################### LLM output decoding ####################################
