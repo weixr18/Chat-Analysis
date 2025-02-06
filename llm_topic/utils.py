@@ -57,7 +57,7 @@ u代表发布者，c代表消息内容，t代表发布的时间戳(精确到秒)
 #################################### LLM input preparation ####################################
 
 
-MAX_INPUT_LEN = 5000
+MAX_INPUT_LEN = 2000
 
 # get input list
 def _create_input_list(lines):

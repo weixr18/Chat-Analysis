@@ -111,7 +111,7 @@ skip_data = [
 
 DEBUG_MODE = False
 VERBOSE = False
-model = _get_model()
+model = _get_model(PROVIDER)
 with open(TMP_START_FILE, "r", encoding="utf-8") as json_file:
     starts = json.load(json_file)
 if DEBUG_MODE:
