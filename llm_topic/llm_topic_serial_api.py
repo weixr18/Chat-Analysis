@@ -5,7 +5,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from utils import _get_model, _decode_reply, _create_input_list
 from utils import *
 
-PROVIDER = 'zhipu'
+PROVIDER = 'aliyun'
 
 #################################### preparation ####################################
 
@@ -34,7 +34,8 @@ def _prepare_input(name):
 
 #################################### LLM ####################################
 
-MAX_WORKERS = 5
+MAX_WORKERS = 10
+SLEEP_SECONDS = 1
 
 def get_file_topics(model:OpenAI, starts:dict, names:list):
     def _save_to_file(name, json_str):
@@ -51,6 +52,7 @@ def get_file_topics(model:OpenAI, starts:dict, names:list):
                     {"role": "user", "content": messages}
                 ],
                 max_tokens=2048,
+                temperature=1.0,
                 stream=False,
             )
         except Exception as e:
@@ -60,7 +62,7 @@ def get_file_topics(model:OpenAI, starts:dict, names:list):
         START_TIME = starts[name]['CreateTime']
         json_str = _decode_reply(reply, START_TIME, msgs_outs, False)
         _save_to_file(name, json_str)
-        time.sleep(10)
+        time.sleep(SLEEP_SECONDS)
 
     for name in names:
         output_file = f'{LLM_OUTPUT_PATH}/{name}.txt'
@@ -69,11 +71,16 @@ def get_file_topics(model:OpenAI, starts:dict, names:list):
         input_list, msgs_outs = _prepare_input(name)
         n_input = len(input_list)
         print(f"input num: {n_input}, message num: {len(msgs_outs)}, avg msg/input: {len(msgs_outs)/n_input}")
-        with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor: 
-            futures = [executor.submit(process_message, messages, name, msgs_outs) for messages in input_list]
-            for future in tqdm(as_completed(futures), total=len(futures)):
-                future.result()
-        pass
+        if DEBUG_MODE:
+            for messages in input_list:
+                process_message(messages, name, msgs_outs)
+            pass
+        else:
+            with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor: 
+                futures = [executor.submit(process_message, messages, name, msgs_outs) for messages in input_list]
+                for future in tqdm(as_completed(futures), total=len(futures)):
+                    future.result()
+            pass
     return
 
 
@@ -84,7 +91,7 @@ def get_file_topics(model:OpenAI, starts:dict, names:list):
 
 
 skip_data = [
-    'text-debug',
+    'text-debug', '2022-3', '2022-4'
 ]
 
 

@@ -57,7 +57,7 @@ u代表发布者，c代表消息内容，t代表发布的时间戳(精确到秒)
 #################################### LLM input preparation ####################################
 
 
-MAX_INPUT_LEN = 2000
+MAX_INPUT_LEN = 3000
 
 # get input list
 def _create_input_list(lines):
@@ -128,12 +128,13 @@ def _decode_reply(reply:str, START_TIME:int, msgs:dict, VERBOSE:bool):
         rpl = _trim_string(rpl)
         try:
             tpc = json.loads(rpl)
+            tpc["StartTime"] = _time(tpc["StartTime"]+START_TIME)
+            tpc["EndTime"] = _time(tpc["EndTime"]+START_TIME)
+            tpc["Count"] = len(tpc["Messages"])
+            tpc["msgs"] = []
         except Exception as e:
+            print(e)
             continue
-        tpc["StartTime"] = _time(tpc["StartTime"]+START_TIME)
-        tpc["EndTime"] = _time(tpc["EndTime"]+START_TIME)
-        tpc["Count"] = len(tpc["Messages"])
-        tpc["msgs"] = []
         for id_ in tpc["Messages"]:
             if id_ not in msgs:
                 print("not in msgs:", id_)
